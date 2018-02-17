@@ -1,0 +1,764 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         ;/******************************************************
+                       ***********************/
+    2 00000000         ;/* STM32L1xx_XL_OPT.s: STM32L1xx XL-Density Flash Optio
+                       n Bytes               */
+    3 00000000         ;/******************************************************
+                       ***********************/
+    4 00000000         ;/* <<< Use Configuration Wizard in Context Menu >>>    
+                                             */
+    5 00000000         ;/******************************************************
+                       ***********************/
+    6 00000000         ;/*  This file is part of the uVision/ARM development to
+                       ols                   */
+    7 00000000         ;/*  Copyright (c) 2012 Keil - An ARM Company.          
+                                             */
+    8 00000000         ;/*  All rights reserved.                               
+                                             */
+    9 00000000         ;/******************************************************
+                       ***********************/
+   10 00000000         
+   11 00000000         ; Option byte organization
+   12 00000000         ;-------------------------
+   13 00000000         ;   Address     [31:24] [23:16] [15:8] [7:0]
+   14 00000000         ; 0x1FF80000       -     nRDP      -    RDP     (0xFF550
+                       0AA)
+   15 00000000         ; 0x1FF80004       -     nUSER     -    USER    (0xFF870
+                       078)
+   16 00000000         ; 0x1FF80008     nWRP1   nWRP0   WRP1   WRP0    (0xFFFF0
+                       000)
+   17 00000000         ; 0x1FF8000C     nWRP3   nWRP2   WRP3   WRP2    (0xFFFF0
+                       000)
+   18 00000000         ; 0x1FF80010     nWRP5   nWRP4   WRP5   WRP4    (0xFFFF0
+                       000)
+   19 00000000         ; 0x1FF80014     nWRP7   nWRP6   WRP7   WRP6    (0xFFFF0
+                       000)
+   20 00000000         ; 0x1FF80018     nWRP9   nWRP8   WRP9   WRP8    (0xFFFF0
+                       000)
+   21 00000000         ; 0x1FF8001C     nWRP11  nWRP10  WRP11  WRP10   (0xFFFF0
+                       000)
+   22 00000000         ; 0x1FF80080     nWRP13  nWRP12  WRP13  WRP12   (0xFFFF0
+                       000)
+   23 00000000         ; 0x1FF80084     nWRP15  nWRP14  WRP15  WRP14   (0xFFFF0
+                       000)
+   24 00000000         
+   25 00000000         
+   26 00000000         ;// <e> Flash Option Bytes
+   27 00000000 00000001 
+                       FLASH_OPT
+                               EQU              1
+   28 00000000         
+   29 00000000         ;// <h> Flash Read Protection
+   30 00000000         ;//     <i> Read protection is used to protect the softw
+                       are code stored in Flash memory
+   31 00000000         ;//   <o0> Read Protection Level
+   32 00000000         ;//     <i> Level 0: No Protection 
+   33 00000000         ;//     <i> Level 1: Read Protection of Memories (memory
+                        read protection enabled!)
+   34 00000000         ;//     <i> Level 2: Chip Protection (memory read protec
+                       tion enabled and all debug features disabled!)
+   35 00000000         ;//     <i> Note: Mass Erase is performed when Level 1 i
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+                       s active and Level 0 is requested
+   36 00000000         ;//          <0xAA=> Level 0 (No Protection) 
+   37 00000000         ;//          <0x00=> Level 1 (Read Protection of Memorie
+                       s)
+   38 00000000         ;//          <0xCC=> Level 2 (Chip Protection)
+   39 00000000         ;// </h>
+   40 00000000 000000AA 
+                       RDP     EQU              0xAA
+   41 00000000 00000055 
+                       nRDP    EQU              RDP:EOR:0xFF
+   42 00000000         
+   43 00000000         ;// <h> Flash Write Protection
+   44 00000000         ;//   <h> WRP0..WRP3
+   45 00000000         ;//     <o0.0> Sector 0
+   46 00000000         ;//     <o0.1> Sector 1
+   47 00000000         ;//     <o0.2> Sector 2
+   48 00000000         ;//     <o0.3> Sector 3
+   49 00000000         ;//     <o0.4> Sector 4
+   50 00000000         ;//     <o0.5> Sector 5
+   51 00000000         ;//     <o0.6> Sector 6
+   52 00000000         ;//     <o0.7> Sector 7
+   53 00000000         ;//     <o1.0> Sector 8
+   54 00000000         ;//     <o1.1> Sector 9
+   55 00000000         ;//     <o1.2> Sector 10
+   56 00000000         ;//     <o1.3> Sector 11
+   57 00000000         ;//     <o1.4> Sector 12
+   58 00000000         ;//     <o1.5> Sector 13
+   59 00000000         ;//     <o1.6> Sector 14
+   60 00000000         ;//     <o1.7> Sector 15
+   61 00000000         ;//     <o2.0> Sector 16
+   62 00000000         ;//     <o2.1> Sector 17
+   63 00000000         ;//     <o2.2> Sector 18
+   64 00000000         ;//     <o2.3> Sector 19
+   65 00000000         ;//     <o2.4> Sector 20
+   66 00000000         ;//     <o2.5> Sector 21
+   67 00000000         ;//     <o2.6> Sector 22
+   68 00000000         ;//     <o2.7> Sector 23
+   69 00000000         ;//     <o3.0> Sector 24
+   70 00000000         ;//     <o3.1> Sector 25
+   71 00000000         ;//     <o3.2> Sector 26
+   72 00000000         ;//     <o3.3> Sector 27
+   73 00000000         ;//     <o3.4> Sector 28
+   74 00000000         ;//     <o3.5> Sector 29
+   75 00000000         ;//     <o3.6> Sector 30
+   76 00000000         ;//     <o3.7> Sector 31
+   77 00000000         ;//   </h>
+   78 00000000 00000000 
+                       WRP00   EQU              0x00
+   79 00000000 00000000 
+                       WRP01   EQU              0x00
+   80 00000000 00000000 
+                       WRP02   EQU              0x00
+   81 00000000 00000000 
+                       WRP03   EQU              0x00
+   82 00000000 000000FF 
+                       nWRP00  EQU              WRP00:EOR:0xFF
+   83 00000000 000000FF 
+                       nWRP01  EQU              WRP01:EOR:0xFF
+   84 00000000 000000FF 
+
+
+
+ARM Macro Assembler    Page 3 
+
+
+                       nWRP02  EQU              WRP02:EOR:0xFF
+   85 00000000 000000FF 
+                       nWRP03  EQU              WRP03:EOR:0xFF
+   86 00000000         ;//   <h> WRP4..WRP7
+   87 00000000         ;//     <o0.0> Sector 32
+   88 00000000         ;//     <o0.1> Sector 33
+   89 00000000         ;//     <o0.2> Sector 34
+   90 00000000         ;//     <o0.3> Sector 35
+   91 00000000         ;//     <o0.4> Sector 36
+   92 00000000         ;//     <o0.5> Sector 37
+   93 00000000         ;//     <o0.6> Sector 38
+   94 00000000         ;//     <o0.7> Sector 39
+   95 00000000         ;//     <o1.0> Sector 40
+   96 00000000         ;//     <o1.1> Sector 41
+   97 00000000         ;//     <o1.2> Sector 42
+   98 00000000         ;//     <o1.3> Sector 43
+   99 00000000         ;//     <o1.4> Sector 44
+  100 00000000         ;//     <o1.5> Sector 45
+  101 00000000         ;//     <o1.6> Sector 46
+  102 00000000         ;//     <o1.7> Sector 47
+  103 00000000         ;//     <o2.0> Sector 48
+  104 00000000         ;//     <o2.1> Sector 49
+  105 00000000         ;//     <o2.2> Sector 50
+  106 00000000         ;//     <o2.3> Sector 51
+  107 00000000         ;//     <o2.4> Sector 52
+  108 00000000         ;//     <o2.5> Sector 53
+  109 00000000         ;//     <o2.6> Sector 54
+  110 00000000         ;//     <o2.7> Sector 55
+  111 00000000         ;//     <o3.0> Sector 56
+  112 00000000         ;//     <o3.1> Sector 57
+  113 00000000         ;//     <o3.2> Sector 58
+  114 00000000         ;//     <o3.3> Sector 59
+  115 00000000         ;//     <o3.4> Sector 60
+  116 00000000         ;//     <o3.5> Sector 61
+  117 00000000         ;//     <o3.6> Sector 62
+  118 00000000         ;//     <o3.7> Sector 63
+  119 00000000         ;//   </h>
+  120 00000000 00000000 
+                       WRP04   EQU              0x00
+  121 00000000 00000000 
+                       WRP05   EQU              0x00
+  122 00000000 00000000 
+                       WRP06   EQU              0x00
+  123 00000000 00000000 
+                       WRP07   EQU              0x00
+  124 00000000 000000FF 
+                       nWRP04  EQU              WRP04:EOR:0xFF
+  125 00000000 000000FF 
+                       nWRP05  EQU              WRP05:EOR:0xFF
+  126 00000000 000000FF 
+                       nWRP06  EQU              WRP06:EOR:0xFF
+  127 00000000 000000FF 
+                       nWRP07  EQU              WRP07:EOR:0xFF
+  128 00000000         ;//   <h> WRP8..WRP11
+  129 00000000         ;//     <o0.0> Sector 64
+  130 00000000         ;//     <o0.1> Sector 65
+  131 00000000         ;//     <o0.2> Sector 66
+  132 00000000         ;//     <o0.3> Sector 67
+  133 00000000         ;//     <o0.4> Sector 68
+
+
+
+ARM Macro Assembler    Page 4 
+
+
+  134 00000000         ;//     <o0.5> Sector 69
+  135 00000000         ;//     <o0.6> Sector 70
+  136 00000000         ;//     <o0.7> Sector 71
+  137 00000000         ;//     <o1.0> Sector 72
+  138 00000000         ;//     <o1.1> Sector 73
+  139 00000000         ;//     <o1.2> Sector 74
+  140 00000000         ;//     <o1.3> Sector 75
+  141 00000000         ;//     <o1.4> Sector 76
+  142 00000000         ;//     <o1.5> Sector 77
+  143 00000000         ;//     <o1.6> Sector 78
+  144 00000000         ;//     <o1.7> Sector 79
+  145 00000000         ;//     <o2.0> Sector 80
+  146 00000000         ;//     <o2.1> Sector 81
+  147 00000000         ;//     <o2.2> Sector 82
+  148 00000000         ;//     <o2.3> Sector 83
+  149 00000000         ;//     <o2.4> Sector 84
+  150 00000000         ;//     <o2.5> Sector 85
+  151 00000000         ;//     <o2.6> Sector 86
+  152 00000000         ;//     <o2.7> Sector 87
+  153 00000000         ;//     <o3.0> Sector 88
+  154 00000000         ;//     <o3.1> Sector 89
+  155 00000000         ;//     <o3.2> Sector 90
+  156 00000000         ;//     <o3.3> Sector 91
+  157 00000000         ;//     <o3.4> Sector 92
+  158 00000000         ;//     <o3.5> Sector 93
+  159 00000000         ;//     <o3.6> Sector 94
+  160 00000000         ;//     <o3.7> Sector 95
+  161 00000000         ;//   </h>
+  162 00000000 00000000 
+                       WRP08   EQU              0x00
+  163 00000000 00000000 
+                       WRP09   EQU              0x00
+  164 00000000 00000000 
+                       WRP10   EQU              0x00
+  165 00000000 00000000 
+                       WRP11   EQU              0x00
+  166 00000000 000000FF 
+                       nWRP08  EQU              WRP08:EOR:0xFF
+  167 00000000 000000FF 
+                       nWRP09  EQU              WRP09:EOR:0xFF
+  168 00000000 000000FF 
+                       nWRP10  EQU              WRP10:EOR:0xFF
+  169 00000000 000000FF 
+                       nWRP11  EQU              WRP11:EOR:0xFF
+  170 00000000         ;//   <h> WRP12..WRP15
+  171 00000000         ;//     <o0.0> Sector 96
+  172 00000000         ;//     <o0.1> Sector 97
+  173 00000000         ;//     <o0.2> Sector 98
+  174 00000000         ;//     <o0.3> Sector 99
+  175 00000000         ;//     <o0.4> Sector 100
+  176 00000000         ;//     <o0.5> Sector 101
+  177 00000000         ;//     <o0.6> Sector 102
+  178 00000000         ;//     <o0.7> Sector 103
+  179 00000000         ;//     <o1.0> Sector 104
+  180 00000000         ;//     <o1.1> Sector 105
+  181 00000000         ;//     <o1.2> Sector 106
+  182 00000000         ;//     <o1.3> Sector 107
+  183 00000000         ;//     <o1.4> Sector 108
+  184 00000000         ;//     <o1.5> Sector 109
+
+
+
+ARM Macro Assembler    Page 5 
+
+
+  185 00000000         ;//     <o1.6> Sector 110
+  186 00000000         ;//     <o1.7> Sector 111
+  187 00000000         ;//     <o2.0> Sector 112
+  188 00000000         ;//     <o2.1> Sector 113
+  189 00000000         ;//     <o2.2> Sector 114
+  190 00000000         ;//     <o2.3> Sector 115
+  191 00000000         ;//     <o2.4> Sector 116
+  192 00000000         ;//     <o2.5> Sector 117
+  193 00000000         ;//     <o2.6> Sector 118
+  194 00000000         ;//     <o2.7> Sector 119
+  195 00000000         ;//     <o3.0> Sector 120
+  196 00000000         ;//     <o3.1> Sector 121
+  197 00000000         ;//     <o3.2> Sector 122
+  198 00000000         ;//     <o3.3> Sector 123
+  199 00000000         ;//     <o3.4> Sector 124
+  200 00000000         ;//     <o3.5> Sector 125
+  201 00000000         ;//     <o3.6> Sector 126
+  202 00000000         ;//     <o3.7> Sector 127
+  203 00000000         ;//   </h>
+  204 00000000 00000000 
+                       WRP12   EQU              0x00
+  205 00000000 00000000 
+                       WRP13   EQU              0x00
+  206 00000000 00000000 
+                       WRP14   EQU              0x00
+  207 00000000 00000000 
+                       WRP15   EQU              0x00
+  208 00000000 000000FF 
+                       nWRP12  EQU              WRP12:EOR:0xFF
+  209 00000000 000000FF 
+                       nWRP13  EQU              WRP13:EOR:0xFF
+  210 00000000 000000FF 
+                       nWRP14  EQU              WRP14:EOR:0xFF
+  211 00000000 000000FF 
+                       nWRP15  EQU              WRP15:EOR:0xFF
+  212 00000000         ;// </h>
+  213 00000000         
+  214 00000000         ;// <h> User Configuration
+  215 00000000         ;//   <o0.0..3> BOR_LEV     
+  216 00000000         ;//          < 0=> BOR OFF:     Reset threshold level fo
+                       r 1.45V - 1.55V (power down only)
+  217 00000000         ;//          < 1=> BOR OFF:     Reset threshold level fo
+                       r 1.45V - 1.55V (power down only)
+  218 00000000         ;//          < 2=> BOR OFF:     Reset threshold level fo
+                       r 1.45V - 1.55V (power down only)
+  219 00000000         ;//          < 3=> BOR OFF:     Reset threshold level fo
+                       r 1.45V - 1.55V (power down only)
+  220 00000000         ;//          < 4=> BOR OFF:     Reset threshold level fo
+                       r 1.45V - 1.55V (power down only)
+  221 00000000         ;//          < 5=> BOR OFF:     Reset threshold level fo
+                       r 1.45V - 1.55V (power down only)
+  222 00000000         ;//          < 6=> BOR OFF:     Reset threshold level fo
+                       r 1.45V - 1.55V (power down only)
+  223 00000000         ;//          < 7=> BOR OFF:     Reset threshold level fo
+                       r 1.45V - 1.55V (power down only)
+  224 00000000         ;//          < 8=> BOR LEVEL 1: Reset threshold level fo
+                       r 1.69V - 1.80V (power on)
+  225 00000000         ;//          < 9=> BOR LEVEL 2: Reset threshold level fo
+                       r 1.94V - 2.10V (power on)
+
+
+
+ARM Macro Assembler    Page 6 
+
+
+  226 00000000         ;//          <10=> BOR LEVEL 3: Reset threshold level fo
+                       r 2.30V - 2.49V (power on)
+  227 00000000         ;//          <11=> BOR LEVEL 4: Reset threshold level fo
+                       r 2.54V - 2.74V (power on)
+  228 00000000         ;//          <12=> BOR LEVEL 5: Reset threshold level fo
+                       r 2.77V - 3.00V (power on)
+  229 00000000         ;//   <o0.4> IWDG_SW     
+  230 00000000         ;//          <0=> HW Watchdog <1=> SW Watchdog
+  231 00000000         ;//   <o0.5> nRST_STOP  <i> Generate Reset when entering
+                        STOP Mode
+  232 00000000         ;//          <0=> Enabled <1=> Disabled
+  233 00000000         ;//   <o0.6> nRST_STDBY <i> Generate Reset when entering
+                        Standby Mode
+  234 00000000         ;//          <0=> Enabled <1=> Disabled
+  235 00000000         ;//   <o0.7> BFB2 <i> This bit is used to boot from bank
+                        2
+  236 00000000         ;//          <0=> Boot from system memory <1=> Boot from
+                        bank 1
+  237 00000000         ;// </h>
+  238 00000000 00000078 
+                       USER    EQU              0x78
+  239 00000000 00000087 
+                       nUSER   EQU              USER:EOR:0xFF
+  240 00000000         
+  241 00000000         ;// </e>
+  242 00000000         
+  243 00000000         
+  244 00000000                 IF               FLASH_OPT <> 0
+  245 00000000                 AREA             |.ARM.__AT_0x1FF80000|, CODE, R
+EADONLY
+  246 00000000 AA 00 55 
+              FF               DCB              RDP,   0x00,   nRDP,   0xFF
+  247 00000004 78 00 87 
+              FF               DCB              USER,  0x00,   nUSER,  0xFF
+  248 00000008 00 00 FF 
+              FF               DCB              WRP00, WRP01,  nWRP00, nWRP01
+  249 0000000C 00 00 FF 
+              FF               DCB              WRP02, WRP03,  nWRP02, nWRP03
+  250 00000010 00 00 FF 
+              FF               DCB              WRP04, WRP05,  nWRP04, nWRP05
+  251 00000014 00 00 FF 
+              FF               DCB              WRP06, WRP07,  nWRP06, nWRP07
+  252 00000018 00 00 FF 
+              FF               DCB              WRP08, WRP09,  nWRP08, nWRP09
+  253 0000001C 00 00 FF 
+              FF               DCB              WRP10, WRP11,  nWRP10, nWRP11
+  254 00000020 00 00 FF 
+              FF               DCB              WRP12, WRP13,  nWRP12, nWRP13
+  255 00000024 00 00 FF 
+              FF               DCB              WRP14, WRP15,  nWRP14, nWRP15
+  256 00000028                 ENDIF
+  257 00000028         
+  258 00000028         
+  259 00000028                 END
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
+ork --depend=.\objects\stm32l1xx_xl_opt.d -o.\objects\stm32l1xx_xl_opt.o -I.\RT
+E\_Target_1 -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include -IC:\Keil_v5\AR
+M\PACK\Keil\STM32L1xx_DFP\1.2.0\Device\Include --predefine="__EVAL SETA 1" --pr
+edefine="__UVISION_VERSION SETA 524" --predefine="_RTE_ SETA 1" --predefine="ST
+
+
+
+ARM Macro Assembler    Page 7 
+
+
+M32L152xE SETA 1" --list=.\listings\stm32l1xx_xl_opt.lst STM32L1xx_XL_OPT.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+.ARM.__AT_0x1FF80000 00000000
+
+Symbol: .ARM.__AT_0x1FF80000
+   Definitions
+      At line 245 in file STM32L1xx_XL_OPT.s
+   Uses
+      None
+Comment: .ARM.__AT_0x1FF80000 unused
+1 symbol
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Absolute symbols
+
+FLASH_OPT 00000001
+
+Symbol: FLASH_OPT
+   Definitions
+      At line 27 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 244 in file STM32L1xx_XL_OPT.s
+Comment: FLASH_OPT used once
+RDP 000000AA
+
+Symbol: RDP
+   Definitions
+      At line 40 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 41 in file STM32L1xx_XL_OPT.s
+      At line 246 in file STM32L1xx_XL_OPT.s
+
+USER 00000078
+
+Symbol: USER
+   Definitions
+      At line 238 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 239 in file STM32L1xx_XL_OPT.s
+      At line 247 in file STM32L1xx_XL_OPT.s
+
+WRP00 00000000
+
+Symbol: WRP00
+   Definitions
+      At line 78 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 82 in file STM32L1xx_XL_OPT.s
+      At line 248 in file STM32L1xx_XL_OPT.s
+
+WRP01 00000000
+
+Symbol: WRP01
+   Definitions
+      At line 79 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 83 in file STM32L1xx_XL_OPT.s
+      At line 248 in file STM32L1xx_XL_OPT.s
+
+WRP02 00000000
+
+Symbol: WRP02
+   Definitions
+      At line 80 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 84 in file STM32L1xx_XL_OPT.s
+      At line 249 in file STM32L1xx_XL_OPT.s
+
+WRP03 00000000
+
+Symbol: WRP03
+   Definitions
+      At line 81 in file STM32L1xx_XL_OPT.s
+   Uses
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+Absolute symbols
+
+      At line 85 in file STM32L1xx_XL_OPT.s
+      At line 249 in file STM32L1xx_XL_OPT.s
+
+WRP04 00000000
+
+Symbol: WRP04
+   Definitions
+      At line 120 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 124 in file STM32L1xx_XL_OPT.s
+      At line 250 in file STM32L1xx_XL_OPT.s
+
+WRP05 00000000
+
+Symbol: WRP05
+   Definitions
+      At line 121 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 125 in file STM32L1xx_XL_OPT.s
+      At line 250 in file STM32L1xx_XL_OPT.s
+
+WRP06 00000000
+
+Symbol: WRP06
+   Definitions
+      At line 122 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 126 in file STM32L1xx_XL_OPT.s
+      At line 251 in file STM32L1xx_XL_OPT.s
+
+WRP07 00000000
+
+Symbol: WRP07
+   Definitions
+      At line 123 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 127 in file STM32L1xx_XL_OPT.s
+      At line 251 in file STM32L1xx_XL_OPT.s
+
+WRP08 00000000
+
+Symbol: WRP08
+   Definitions
+      At line 162 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 166 in file STM32L1xx_XL_OPT.s
+      At line 252 in file STM32L1xx_XL_OPT.s
+
+WRP09 00000000
+
+Symbol: WRP09
+   Definitions
+      At line 163 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 167 in file STM32L1xx_XL_OPT.s
+      At line 252 in file STM32L1xx_XL_OPT.s
+
+WRP10 00000000
+
+
+
+
+ARM Macro Assembler    Page 3 Alphabetic symbol ordering
+Absolute symbols
+
+Symbol: WRP10
+   Definitions
+      At line 164 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 168 in file STM32L1xx_XL_OPT.s
+      At line 253 in file STM32L1xx_XL_OPT.s
+
+WRP11 00000000
+
+Symbol: WRP11
+   Definitions
+      At line 165 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 169 in file STM32L1xx_XL_OPT.s
+      At line 253 in file STM32L1xx_XL_OPT.s
+
+WRP12 00000000
+
+Symbol: WRP12
+   Definitions
+      At line 204 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 208 in file STM32L1xx_XL_OPT.s
+      At line 254 in file STM32L1xx_XL_OPT.s
+
+WRP13 00000000
+
+Symbol: WRP13
+   Definitions
+      At line 205 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 209 in file STM32L1xx_XL_OPT.s
+      At line 254 in file STM32L1xx_XL_OPT.s
+
+WRP14 00000000
+
+Symbol: WRP14
+   Definitions
+      At line 206 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 210 in file STM32L1xx_XL_OPT.s
+      At line 255 in file STM32L1xx_XL_OPT.s
+
+WRP15 00000000
+
+Symbol: WRP15
+   Definitions
+      At line 207 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 211 in file STM32L1xx_XL_OPT.s
+      At line 255 in file STM32L1xx_XL_OPT.s
+
+nRDP 00000055
+
+Symbol: nRDP
+   Definitions
+      At line 41 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 246 in file STM32L1xx_XL_OPT.s
+
+
+
+ARM Macro Assembler    Page 4 Alphabetic symbol ordering
+Absolute symbols
+
+Comment: nRDP used once
+nUSER 00000087
+
+Symbol: nUSER
+   Definitions
+      At line 239 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 247 in file STM32L1xx_XL_OPT.s
+Comment: nUSER used once
+nWRP00 000000FF
+
+Symbol: nWRP00
+   Definitions
+      At line 82 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 248 in file STM32L1xx_XL_OPT.s
+Comment: nWRP00 used once
+nWRP01 000000FF
+
+Symbol: nWRP01
+   Definitions
+      At line 83 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 248 in file STM32L1xx_XL_OPT.s
+Comment: nWRP01 used once
+nWRP02 000000FF
+
+Symbol: nWRP02
+   Definitions
+      At line 84 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 249 in file STM32L1xx_XL_OPT.s
+Comment: nWRP02 used once
+nWRP03 000000FF
+
+Symbol: nWRP03
+   Definitions
+      At line 85 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 249 in file STM32L1xx_XL_OPT.s
+Comment: nWRP03 used once
+nWRP04 000000FF
+
+Symbol: nWRP04
+   Definitions
+      At line 124 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 250 in file STM32L1xx_XL_OPT.s
+Comment: nWRP04 used once
+nWRP05 000000FF
+
+Symbol: nWRP05
+   Definitions
+      At line 125 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 250 in file STM32L1xx_XL_OPT.s
+Comment: nWRP05 used once
+nWRP06 000000FF
+
+
+
+
+ARM Macro Assembler    Page 5 Alphabetic symbol ordering
+Absolute symbols
+
+Symbol: nWRP06
+   Definitions
+      At line 126 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 251 in file STM32L1xx_XL_OPT.s
+Comment: nWRP06 used once
+nWRP07 000000FF
+
+Symbol: nWRP07
+   Definitions
+      At line 127 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 251 in file STM32L1xx_XL_OPT.s
+Comment: nWRP07 used once
+nWRP08 000000FF
+
+Symbol: nWRP08
+   Definitions
+      At line 166 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 252 in file STM32L1xx_XL_OPT.s
+Comment: nWRP08 used once
+nWRP09 000000FF
+
+Symbol: nWRP09
+   Definitions
+      At line 167 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 252 in file STM32L1xx_XL_OPT.s
+Comment: nWRP09 used once
+nWRP10 000000FF
+
+Symbol: nWRP10
+   Definitions
+      At line 168 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 253 in file STM32L1xx_XL_OPT.s
+Comment: nWRP10 used once
+nWRP11 000000FF
+
+Symbol: nWRP11
+   Definitions
+      At line 169 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 253 in file STM32L1xx_XL_OPT.s
+Comment: nWRP11 used once
+nWRP12 000000FF
+
+Symbol: nWRP12
+   Definitions
+      At line 208 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 254 in file STM32L1xx_XL_OPT.s
+Comment: nWRP12 used once
+nWRP13 000000FF
+
+Symbol: nWRP13
+   Definitions
+      At line 209 in file STM32L1xx_XL_OPT.s
+
+
+
+ARM Macro Assembler    Page 6 Alphabetic symbol ordering
+Absolute symbols
+
+   Uses
+      At line 254 in file STM32L1xx_XL_OPT.s
+Comment: nWRP13 used once
+nWRP14 000000FF
+
+Symbol: nWRP14
+   Definitions
+      At line 210 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 255 in file STM32L1xx_XL_OPT.s
+Comment: nWRP14 used once
+nWRP15 000000FF
+
+Symbol: nWRP15
+   Definitions
+      At line 211 in file STM32L1xx_XL_OPT.s
+   Uses
+      At line 255 in file STM32L1xx_XL_OPT.s
+Comment: nWRP15 used once
+37 symbols
+372 symbols in table
