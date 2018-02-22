@@ -21,6 +21,7 @@ Pin20 : LED-
 */
 
 int main(){
+	int data=0;
 	LCDInitialize();
 	LCDBegin();
 	LCDWelcome();
